@@ -6,9 +6,10 @@ var express    = require('express');		// call express
 var app        = express(); 				// define our app using express
 var bodyParser = require('body-parser'); 	// get body-parser
 var morgan     = require('morgan'); 		// used to see requests
-var mongoose   = require('mongoose');
 var config 	   = require('./config');
-var path 	   = require('path');
+var path 	     = require('path');
+var pg         = require('pg'); 
+var query      = require('pg-query'); 
 
 // APP CONFIGURATION ==================
 // ====================================
@@ -27,8 +28,11 @@ app.use(function(req, res, next) {
 // log all requests to the console 
 app.use(morgan('dev'));
 
+// enable SSL on postgres requests
+pg.defaults.ssl = true;
+
 // connect to our database (hosted on modulus.io)
-mongoose.connect(config.database); 
+query.connectionParameters = process.env.DATABASE_URL || config.database;
 
 // set static files location
 // used for requests that our frontend will make
@@ -38,7 +42,7 @@ app.use(express.static(__dirname + '/public'));
 // ====================================
 
 // API ROUTES ------------------------
-var apiRoutes = require('./app/routes/api')(app, express);
+var apiRoutes = require('./app/routes/api');
 app.use('/api', apiRoutes);
 
 // MAIN CATCHALL ROUTE --------------- 
