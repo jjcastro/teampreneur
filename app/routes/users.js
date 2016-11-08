@@ -12,7 +12,14 @@ router.route('/')
   // create a user (accessed at POST http://localhost:8080/users)
   .post(function(req, res) {
     
-    
+    var params = req.body;
+    var sql = "insert into users (name,email,image_link,phone) values ($1,$2,$3,$4) RETURNING *"
+    query(sql, [params.name,params.email,params.image_link,params.phone], function(err, rows) {
+      if (err) return res.send(err);
+      console.log(rows);
+      res.json(rows);
+    });
+
 
   })
 
@@ -23,7 +30,7 @@ router.route('/')
 
     query(sql, [], function(err, rows) {
       if (err) return res.send(err);
-
+      
       res.json(rows);
     });
 
@@ -44,7 +51,13 @@ router.route('/:user_id')
   // update the user with this id
   .put(function(req, res) {
     
-
+    var params = req.body;
+    var sql = "update users set name=$1,email=$2,image_link=$3,phone=$4 where id=$5 RETURNING *"
+    query(sql, [params.name,params.email,params.image_link,params.phone,req.params.user_id], function(err, rows) {
+      if (err) return res.send(err);
+      console.log(rows);
+      res.json(rows);
+    });
 
   })
 
