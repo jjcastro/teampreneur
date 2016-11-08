@@ -7,12 +7,12 @@ var router = express.Router();
 
 // on routes that end in /projects
 // ----------------------------------------------------
-router.route('/')
+router.route('/:user_id/projects')
 
   // create a project (accessed at POST http://localhost:8080/projects)
   .post(function(req, res) {
     
-    res.json({ message: 'Hola' });
+    res.json({ object: req.params });
 
   })
 

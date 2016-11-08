@@ -56,6 +56,6 @@ router.route('/:user_id')
   });
 
 
-router.use('/:user_id/projects', require('./projects'));
+router.use('/', require('./projects'));
 
 module.exports = router;
