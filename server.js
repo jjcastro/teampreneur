@@ -7,7 +7,7 @@ var app        = express(); 				// define our app using express
 var bodyParser = require('body-parser'); 	// get body-parser
 var morgan     = require('morgan'); 		// used to see requests
 var config 	   = require('./config');
-var path 	     = require('path');
+var path 	   = require('path');
 var pg         = require('pg'); 
 var query      = require('pg-query'); 
 

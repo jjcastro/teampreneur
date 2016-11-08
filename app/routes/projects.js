@@ -12,7 +12,7 @@ router.route('/')
   // create a project (accessed at POST http://localhost:8080/projects)
   .post(function(req, res) {
     
-    
+    res.json({ message: 'Hola' });
 
   })
 
@@ -36,7 +36,7 @@ router.route('/:project_id')
 
   // get the project with that id
   .get(function(req, res) {
-    
+    var id = req.params.project_id;
 
 
   })
