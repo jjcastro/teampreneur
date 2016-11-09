@@ -44,27 +44,40 @@ router.route('/:user_id/projects')
 // req.params.project_id
 // on routes that end in /projects/:project_id
 // ----------------------------------------------------
-router.route('/:project_id')
+router.route('/:user_id/projects/fix')
 
   // get the project with that id
-  .get(function(req, res) {
-    var id = req.params.project_id;
-
-
-  })
-
-  // update the project with this id
   .put(function(req, res) {
+    console.log("inicia");
+    var user_id = req.params.user_id;
+    var users_id = req.body.users;
+    var sql = "update projects set fixed = $1 where owner = $2 RETURNING *";
+    console.log("va a mandar "+sql);
+    query(sql, [true, user_id], function(err, rows) {
+      if (err) console.log("error en query 1");//return res.send(err);
+      console.log(rows);
+      sql = "update users set project = $1 where id = ";
+      var list=[rows[0].id];
+      for (var i = 0; i < users_id.length; i++) {
+        list.push(users_id[i]);
+        sql+="$"+(i+2);
+        if(i!=users_id.length-1) sql+=" or id = ";
+      }
+      console.log("va a mandar "+sql);
+      query(sql, list, function(err, rows) {
+        if (err) console.log("error en query 2: "+err);//return res.send(err);
+        res.json(rows);
+      });
+
+    });
+
+    console.log("mando primer sql")
     
-
-
+    
+    console.log("fin");
   })
 
-  // delete the project with this id
-  .delete(function(req, res) {
-    
 
 
-  });
 
 module.exports = router;
