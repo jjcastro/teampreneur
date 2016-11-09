@@ -88,16 +88,18 @@ router.route('/:user_id')
 
 
   });
-  router.route(':user_id/keywords')
+  router.route('/:user_id/keywords')
 
     .get(function(req,res){
-      var sql = "select key.* from user_keywords uk, keywords key where uk.user_id=$1 and "
-                +"uk.keyword_id=keys.id ";
-      query(sql,[], function(err, rows){
-        if (err) return res.send(err);
+      var user_id=req.params.user_id;
+      var sql = "select k.* from user_keywords u, keywords k where u.user_id=$1 and "
+                +"u.keyword_id=k.id ";
+      query(sql,[user_id], function(err, rows){
+        if (err) console.log(err);//return res.send(err);
         res.json(rows);
       })
     })
+    
     .post(function(req, res) {
     var idUser = req.body.user_id;
     var params = req.body;

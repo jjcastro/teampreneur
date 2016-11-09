@@ -55,12 +55,11 @@ router.route('/:user_id/projects')
   });
 
 
-route.route('projects')
+router.route('/projects')
 .get(function(req, res) {
-    var user_id = req.params.user_id;
-    var sql = "select * from projects where owner = $1";
+    var sql = "select * from projects";
 
-    query(sql, [user_id], function(err, rows) {
+    query(sql, [], function(err, rows) {
       if (err) return res.send(err);
 
       res.json(rows);
@@ -68,7 +67,7 @@ route.route('projects')
   });
 
 //ruta de ofertas TODO - probar
-route.route('projects/offers')
+router.route('/:user_id/projects/offers')
   //get de las ofertas, proyectos con keywords que cumpla el usuario y con el cual no haya interactuado antes
   .get(function(req, res) {
     var user_id = req.params.user_id;
@@ -84,17 +83,19 @@ route.route('projects/offers')
   });
 
 //ruta para la tabla project_keywords
-route.route('projects/:project_id/keywords')
+router.route('/projects/:project_id/keywords')
+  // TO DO - Probar get
   .get(function(req, res) {
     var project_id = req.params.project_id;
-    var sql = "select pk.* from projects p, project_keywords pk where "
-              +"pk.project_id=$1 and p.id=pk.project_id";
+    var sql = "select k.* from project_keywords p, keywords k where "
+              +"p.project_id=$1 and p.keyword_id=k.id";
 
-    query(sql, [user_id], function(err, rows) {
+    query(sql, [project_id], function(err, rows) {
       if (err) return res.send(err);
 
       res.json(rows);
     });
+  })
 
   .post(function(req, res) {
     var idProyecto = req.params.project_id;
@@ -138,18 +139,17 @@ route.route('projects/:project_id/keywords')
 // req.params.project_id
 // on routes that end in /projects/:project_id
 // ----------------------------------------------------
-router.route('/:user_id/projects/fix')
+router.route('/projects/:project_id/settle')
 
   // get the project with that id
   .put(function(req, res) {
     console.log("inicia");
-    var user_id = req.params.user_id;
+    var project_id = req.params.project_id;
     var users_id = req.body.users;
-    var sql = "update projects set fixed = $1 where owner = $2 RETURNING *";
+    var sql = "update projects set fixed = $1 where id = $2 RETURNING *";
     console.log("va a mandar "+sql);
-    query(sql, [true, user_id], function(err, rows) {
-      if (err) console.log("error en query 1");//return res.send(err);
-      console.log(rows);
+    query(sql, [true, project_id], function(err, rows) {
+      if (err) console.log("error en query 1" + err);//return res.send(err);
       sql = "update users set project = $1 where id = ";
       var list=[rows[0].id];
       for (var i = 0; i < users_id.length; i++) {
@@ -157,21 +157,35 @@ router.route('/:user_id/projects/fix')
         sql+="$"+(i+2);
         if(i!=users_id.length-1) sql+=" or id = ";
       }
-      console.log("va a mandar "+sql);
       query(sql, list, function(err, rows) {
         if (err) console.log("error en query 2: "+err);//return res.send(err);
         res.json(rows);
       });
 
     });
-
-    console.log("mando primer sql")
     
+  });
+
+
+
+  // req.params.project_id
+// on routes that end in /projects/:project_id
+// ----------------------------------------------------
+// body: {applied:false|true}
+router.route('/:user_id/projects/:project_id/interaction')
+
+  // get the project with that id
+  .post(function(req, res) {
+    var project_id = req.params.project_id;
+    var user_id = req.params.user_id;
+    var applied = req.body.applied;
+    var sql = "insert into interactions (project_id, user_id, applied) values ($1,$2,$3) RETURNING *";
+    query(sql, [project_id, user_id, applied], function(err, rows) {
+      if (err) console.log("error en query 1" + err);//return res.send(err);
+        res.json(rows);
+    });
     
-    console.log("fin");
-  })
-
-
+  });
 
 
 module.exports = router;
