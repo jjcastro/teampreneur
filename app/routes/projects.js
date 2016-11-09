@@ -13,16 +13,29 @@ router.route('/:user_id/projects')
   .post(function(req, res) {
     var user_id = req.params.user_id;
     var project = req.body;
+    var keys = project.keys;
     var sql = "insert into projects (owner, fixed, name, description) values ($1, $2, $3, $4) RETURNING *";
 
     query(sql, [user_id, false, project.name, project.description], function(err, rows) {
       if (err) return res.send(err);
 
       sql = "update users set project=$1 where id=$2";
-      console.log(rows);
-      query(sql, [rows[0].id, user_id], function(err, rows) {
+      var idProyecto=rows[0].id;
+      query(sql, [idProyecto, user_id], function(err, rows) {
           if (err) return res.send(err);
       });
+      if(keys.length!=0){
+        sql = "insert into project_keywords (project_id, keyword_id) values ";
+        for (var i = 0; i < keys.length; i++) {
+          var idK = keys[i];
+          sql+="("+idProyecto+", "+idK+")";
+          if(i<(keys.length-1)) sql+=",";
+        }
+        console.log(sql);  
+        query(sql, [], function(err, rows) {
+            if (err) return res.send(err);
+        });
+      }
       res.json(rows);
     });
 
@@ -38,6 +51,87 @@ router.route('/:user_id/projects')
 
       res.json(rows);
     });
+
+  });
+
+
+route.route('projects')
+.get(function(req, res) {
+    var user_id = req.params.user_id;
+    var sql = "select * from projects where owner = $1";
+
+    query(sql, [user_id], function(err, rows) {
+      if (err) return res.send(err);
+
+      res.json(rows);
+    });
+  });
+
+//ruta de ofertas TODO - probar
+route.route('projects/offers')
+  //get de las ofertas, proyectos con keywords que cumpla el usuario y con el cual no haya interactuado antes
+  .get(function(req, res) {
+    var user_id = req.params.user_id;
+    var sql = "select distinct p.* from projects p, user_keywords uk, project_keywords pk where "
+              +"uk.user_id=$1 and pk.keyword_id=uk.keyword_id and p.id=pk.project_id and "
+              +"p.id not in (select project_id from interactions inter where inter.user_id=$1)";
+
+    query(sql, [user_id], function(err, rows) {
+      if (err) return res.send(err);
+
+      res.json(rows);
+    });
+  });
+
+//ruta para la tabla project_keywords
+route.route('projects/:project_id/keywords')
+  .get(function(req, res) {
+    var project_id = req.params.project_id;
+    var sql = "select pk.* from projects p, project_keywords pk where "
+              +"pk.project_id=$1 and p.id=pk.project_id";
+
+    query(sql, [user_id], function(err, rows) {
+      if (err) return res.send(err);
+
+      res.json(rows);
+    });
+
+  .post(function(req, res) {
+    var idProyecto = req.params.project_id;
+    var keys = req.body.keys;
+    if(keys.length!=0){
+        sql = "insert into project_keywords (project_id, keyword_id) values ";
+        for (var i = 0; i < keys.length; i++) {
+          var idK = keys[i];
+          sql+="("+idProyecto+", "+idK+")";
+          if(i<(keys.length-1)) sql+=",";
+        }
+        console.log(sql);  
+        query(sql, [], function(err, rows) {
+            if (err) return res.send(err);
+
+            res.json(rows);
+        });
+    }
+
+  })
+
+  .delete(function(req, res) {
+    var idProyecto = req.params.project_id;
+    var keys = req.body.keys;
+    if(keys.length!=0){
+        sql = "delete from project_keywords where ";
+        for (var i = 0; i < keys.length; i++) {
+          var idK = keys[i];
+          sql+="(project_id = "+idProyecto+" AND keyword_id = "+idK+")";
+          if(i<(keys.length-1)) sql+=" OR ";
+        }
+        query(sql, [], function(err, rows) {
+            if (err) return res.send(err);
+
+            res.json(rows);
+        });
+    }
 
   });
 

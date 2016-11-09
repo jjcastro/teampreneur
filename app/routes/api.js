@@ -11,7 +11,6 @@ apiRouter.get('/', function(req, res) {
 });
 
 apiRouter.use('/users', require('./users'));
-apiRouter.use('/projects', require('./projects'));
 apiRouter.use('/keywords', require('./keywords'));
 
 module.exports = apiRouter;

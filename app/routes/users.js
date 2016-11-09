@@ -89,11 +89,20 @@ router.route('/:user_id')
 
   });
   router.route(':user_id/keywords')
+
+    .get(function(req,res){
+      var sql = "select key.* from user_keywords uk, keywords key where uk.user_id=$1 and "
+                +"uk.keyword_id=keys.id ";
+      query(sql,[], function(err, rows){
+        if (err) return res.send(err);
+        res.json(rows);
+      })
+    })
     .post(function(req, res) {
     var idUser = req.body.user_id;
     var params = req.body;
-    if(keys.length!=0){
     var keys = params.keys;
+    if(keys.length!=0){
     var sql = "insert into user_keywords (user_id,keyword_id)values";
 
     for(var i = 0; i<keys.length; i++)
@@ -112,7 +121,7 @@ router.route('/:user_id')
     }
 
 
-  })
+  });
 
 
 router.use('/', require('./projects'));
