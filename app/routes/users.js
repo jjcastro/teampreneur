@@ -13,12 +13,33 @@ router.route('/')
   .post(function(req, res) {
     
     var params = req.body;
+    var keys = params.keys;
     var sql = "insert into users (name,email,image_link,phone) values ($1,$2,$3,$4) RETURNING *"
     query(sql, [params.name,params.email,params.image_link,params.phone], function(err, rows) {
       if (err) return res.send(err);
       console.log(rows);
+      if(keys.length!=0){
+      var idUser = rows[0].id;
+      var sql2 = "insert into user_keywords (user_id,keyword_id) values "
+      for(var i = 0; i<keys.length; i++)
+      {
+        var id_keyword = keys[i];
+        sql2+="("+idUser+","+id_keyword+")";
+        if(i!= keys.length-1)
+          {
+            sql2+=",";
+          }
+      }
+      console.log(sql2);
+    query(sql2, [], function(err, rows) {
+      if (err) return res.send(err);
+      console.log(rows);
+      res.json(rows);
+     });
+  }
       res.json(rows);
     });
+   
 
 
   })
@@ -67,6 +88,31 @@ router.route('/:user_id')
 
 
   });
+  router.route(':user_id/keywords')
+    .post(function(req, res) {
+    var idUser = req.body.user_id;
+    var params = req.body;
+    if(keys.length!=0){
+    var keys = params.keys;
+    var sql = "insert into user_keywords (user_id,keyword_id)values";
+
+    for(var i = 0; i<keys.length; i++)
+      {
+        var id_keyword = keys[i];
+        sql+="("+idUser+","+id_keyword+")";
+        if(i!= keys.length-1)
+          {
+            sql+=",";
+          }
+      }
+    query(sql, [], function(err, rows) {
+      if (err) return res.send(err);
+      res.json(rows);
+    });
+    }
+
+
+  })
 
 
 router.use('/', require('./projects'));
