@@ -7,11 +7,11 @@ var router = express.Router();
 
 // on routes that end in /projects
 // ----------------------------------------------------
-router.route('/:user_id/projects')
+router.route('/')
 
   // create a project (accessed at POST http://localhost:8080/projects)
   .post(function(req, res) {
-    var user_id = req.params.user_id;
+    var user_id = req.decoded.id;
     var project = req.body;
     var keys = project.keys;
     var sql = "insert into projects (owner, fixed, name, description) values ($1, $2, $3, $4) RETURNING *";
@@ -55,24 +55,24 @@ router.route('/:user_id/projects')
   });
 
 
-router.route('/projects')
-.get(function(req, res) {
-    var sql = "select * from projects";
+// router.route('/projects')
+// .get(function(req, res) {
+//     var sql = "select * from projects";
 
-    query(sql, [], function(err, rows) {
-      if (err) return res.send(err);
+//     query(sql, [], function(err, rows) {
+//       if (err) return res.send(err);
 
-      res.json(rows);
-    });
-  });
+//       res.json(rows);
+//     });
+//   });
 
 //ruta de ofertas TODO - probar
-router.route('/:user_id/projects/offers')
+router.route('/offers')
   //get de las ofertas, proyectos con keywords que cumpla el usuario y con el cual no haya interactuado antes
   .get(function(req, res) {
-    var user_id = req.params.user_id;
-    var sql = "select distinct p.* from projects p, user_keywords uk, project_keywords pk where "
-              +"uk.user_id=$1 and pk.keyword_id=uk.keyword_id and p.id=pk.project_id and "
+    var user_id = req.decoded.id;
+    var sql = "select distinct u.name as user_name, u.occupation, p.* from projects p, user_keywords uk, project_keywords pk, users u where "
+              +"uk.user_id=u.id and uk.user_id=$1 and pk.keyword_id=uk.keyword_id and p.id=pk.project_id and "
               +"p.id not in (select project_id from interactions inter where inter.user_id=$1)";
 
     query(sql, [user_id], function(err, rows) {
@@ -139,7 +139,7 @@ router.route('/projects/:project_id/keywords')
 // req.params.project_id
 // on routes that end in /projects/:project_id
 // ----------------------------------------------------
-router.route('/projects/:project_id/settle')
+router.route('/:project_id/settle')
 
   // get the project with that id
   .put(function(req, res) {
@@ -172,12 +172,12 @@ router.route('/projects/:project_id/settle')
 // on routes that end in /projects/:project_id
 // ----------------------------------------------------
 // body: {applied:false|true}
-router.route('/:user_id/projects/:project_id/interaction')
+router.route('/:project_id/interaction')
 
   // get the project with that id
   .post(function(req, res) {
     var project_id = req.params.project_id;
-    var user_id = req.params.user_id;
+    var user_id = req.decoded.id;
     var applied = req.body.applied;
     var sql = "insert into interactions (project_id, user_id, applied) values ($1,$2,$3) RETURNING *";
     query(sql, [project_id, user_id, applied], function(err, rows) {

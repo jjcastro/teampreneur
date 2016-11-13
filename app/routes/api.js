@@ -45,6 +45,7 @@ apiRouter.post('/auth', function(req, res) {
         // if user is found and password is right
         // create a token
         var token = jwt.sign({
+          id: user.id,
           name: user.name,
           email: user.email
         }, superSecret, {
@@ -106,8 +107,9 @@ var middleware = function(req, res, next) {
   }
 };
 
-apiRouter.use('/me', middleware, require('./me'));
-apiRouter.use('/users', middleware, require('./users'));
+apiRouter.use('/me',       middleware, require('./me'));
+apiRouter.use('/projects', middleware, require('./projects'));
+apiRouter.use('/users',    middleware, require('./users'));
 apiRouter.use('/keywords', middleware, require('./keywords'));
 
 module.exports = apiRouter;
