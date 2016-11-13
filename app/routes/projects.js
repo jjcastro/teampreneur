@@ -71,6 +71,7 @@ router.route('/offers')
   //get de las ofertas, proyectos con keywords que cumpla el usuario y con el cual no haya interactuado antes
   .get(function(req, res) {
     var user_id = req.decoded.id;
+    console.log(user_id);
     var sql = "select distinct u.name as user_name, u.occupation, p.* from projects p, user_keywords uk, project_keywords pk, users u where "
               +"uk.user_id=u.id and uk.user_id=$1 and pk.keyword_id=uk.keyword_id and p.id=pk.project_id and "
               +"p.id not in (select project_id from interactions inter where inter.user_id=$1)";
