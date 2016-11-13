@@ -89,11 +89,11 @@ router.route('/offers')
 router.route('/:project_id/keywords')
   // TO DO - Probar get
   .get(function(req, res) {
+    var user_id = req.decoded.id;
     var project_id = req.params.project_id;
-    var sql = "select k.* from project_keywords p, keywords k where "
-              +"p.project_id=$1 and p.keyword_id=k.id";
+    var sql = "select distinct k.name, k.id in (select keyword_id from user_keywords where user_id=$1) as relevant from project_keywords pk, keywords k where pk.project_id=$2 and pk.keyword_id=k.id order by relevant desc";
 
-    query(sql, [project_id], function(err, rows) {
+    query(sql, [user_id, project_id], function(err, rows) {
       if (err) return res.send(err);
 
       res.json(rows);
@@ -137,20 +137,6 @@ router.route('/:project_id/keywords')
         });
     }
 
-  });
-
-router.route('/:project_id/keywords/relevant')
-
-  .get(function(req, res) {
-    var project_id = req.params.project_id;
-    var sql = "select k.* from project_keywords p, keywords k, user_keywords uk where "
-              +"uk.user_id=$1 and uk.keyword_id=p.keyword_id and p.project_id=$2 and p.keyword_id=k.id";
-
-    query(sql, [req.decoded.id, project_id], function(err, rows) {
-      if (err) return res.send(err);
-
-      res.json(rows);
-    });
   });
 
 // req.params.project_id
