@@ -72,9 +72,11 @@ router.route('/offers')
   .get(function(req, res) {
     var user_id = req.decoded.id;
     console.log(user_id);
-    var sql = "select distinct u.name as user_name, u.occupation, p.* from projects p, user_keywords uk, project_keywords pk, users u where "
-              +"uk.user_id=u.id and uk.user_id=$1 and pk.keyword_id=uk.keyword_id and p.id=pk.project_id and "
-              +"p.id not in (select project_id from interactions inter where inter.user_id=$1)";
+    var sql = "select distinct u.name as user_name, u.occupation, p.* "
+            + "from projects p, user_keywords uk, project_keywords pk, users u "
+            + "where uk.user_id=u.id and uk.user_id=$1 and pk.keyword_id=uk.keyword_id "
+            + "and p.id=pk.project_id and "
+            + "p.id not in (select project_id from interactions inter where inter.user_id=$1)";
 
     query(sql, [user_id], function(err, rows) {
       if (err) return res.send(err);
@@ -84,7 +86,7 @@ router.route('/offers')
   });
 
 //ruta para la tabla project_keywords
-router.route('/projects/:project_id/keywords')
+router.route('/:project_id/keywords')
   // TO DO - Probar get
   .get(function(req, res) {
     var project_id = req.params.project_id;
