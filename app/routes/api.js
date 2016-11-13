@@ -106,6 +106,7 @@ var middleware = function(req, res, next) {
   }
 };
 
+apiRouter.use('/me', middleware, require('./me'));
 apiRouter.use('/users', middleware, require('./users'));
 apiRouter.use('/keywords', middleware, require('./keywords'));
 
