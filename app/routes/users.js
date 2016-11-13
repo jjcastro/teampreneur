@@ -1,9 +1,10 @@
 var express    = require('express');
 var bodyParser = require('body-parser');  // get body-parser
 var query      = require('pg-query'); 
+var bcrypt     = require('bcrypt-nodejs');
+var jwt        = require('jsonwebtoken');
 
 var router = express.Router();
-
 
 // on routes that end in /users
 // ----------------------------------------------------
@@ -14,8 +15,17 @@ router.route('/')
     
     var params = req.body;
     var keys = params.keys;
-    var sql = "insert into users (name,email,image_link,phone) values ($1,$2,$3,$4) RETURNING *"
-    query(sql, [params.name,params.email,params.image_link,params.phone], function(err, rows) {
+    var sql = "insert into users (name,email,image_link,phone,password) values ($1,$2,$3,$4,$5) RETURNING *";
+
+    var args = [
+      params.name,
+      params.email,
+      params.image_link,
+      params.phone,
+      bcrypt.hashSync(params.password)
+    ];
+
+    query(sql, args, function(err, rows) {
       if (err) return res.send(err);
       console.log(rows);
       if(keys.length!=0){
