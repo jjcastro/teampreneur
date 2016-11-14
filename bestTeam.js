@@ -182,6 +182,11 @@ class TeamBuilder{
 		if(difp5b>0) puntosNew++;
 		//console.log("Difp1a: "+difp1a+", Difp1b: "+difp1b+", Difp2a: "+difp2a+", Difp2b: "+difp2b);
 		//console.log("Difp3: "+difp3+", Difp4: "+difp4+", Difp5a: "+difp5a+", Difp5b: "+difp5b);
+		//console.log("newp1a: "+newp1a+", newp1b: "+newp1b+", newp2a: "+newp2a+", newp2b: "+newp2b);
+		//console.log("newp3: "+newp3+", newp4: "+newp4+", newp5a: "+newp5a+", newp5b: "+newp5b);
+		//console.log("bestp1a: "+bestp1a+", bestp1b: "+bestp1b+", bestp2a: "+bestp2a+", bestp2b: "+bestp2b);
+		//console.log("bestp3: "+bestp3+", bestp4: "+bestp4+", bestp5a: "+bestp5a+", bestp5b: "+bestp5b);
+		
 		//console.log("Puntos new: "+puntosNew);
 		return puntosNew>4;
 	}
@@ -250,7 +255,7 @@ class TeamBuilder{
 	
 	
 }
-
+/*
 var listaPrueba = [
 [1,35,25,15,10,36,["Java","HTML"]],
 [2,32,29,12,19,32,["Java","Angular"]],
@@ -265,3 +270,4 @@ var keyWordsRequeridosPrueba = ["Java", "Javasript", "Angular", "Finanzas"];
 var equipo = new TeamBuilder(listaPrueba,keyWordsRequeridosPrueba);
 console.log(equipo.getBestTeam());
 equipo.getTeamStats(equipo.getBestTeam());
+*/

@@ -54,18 +54,6 @@ router.route('/')
 
   });
 
-
-// router.route('/projects')
-// .get(function(req, res) {
-//     var sql = "select * from projects";
-
-//     query(sql, [], function(err, rows) {
-//       if (err) return res.send(err);
-
-//       res.json(rows);
-//     });
-//   });
-
 //ruta de ofertas TODO - probar
 router.route('/offers')
   //get de las ofertas, proyectos con keywords que cumpla el usuario y con el cual no haya interactuado antes

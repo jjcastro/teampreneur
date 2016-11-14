@@ -111,5 +111,7 @@ apiRouter.use('/me',       middleware, require('./me'));
 apiRouter.use('/projects', middleware, require('./projects'));
 apiRouter.use('/users',    middleware, require('./users'));
 apiRouter.use('/keywords', middleware, require('./keywords'));
+apiRouter.use('/questions', middleware, require('./questions'));
+apiRouter.use('/personality', middleware, require('./personality'));
 
 module.exports = apiRouter;
