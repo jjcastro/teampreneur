@@ -58,7 +58,7 @@ router.route('/:project_id/team')
 			query(sql, [user_id, project_id], function(err, rows){
 				if(err) return res.send(err);
 
-				for (var i = 0; i < rows.le;ngth; i++) {
+				for (var i = 0; i < rows.length; i++) {
 					var id = rows[i].user_id;
 					others.push(id);
 				}
