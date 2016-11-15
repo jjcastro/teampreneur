@@ -19,9 +19,15 @@ router.route('/')
   // get all the users (accessed at GET http://localhost:8080/api/users)
   .get(function(req, res) {
 
-    var sql = "select * from keywords";
+    var sql = "select * from keywords"
+    var args = [];
 
-    query(sql, [], function(err, rows) {
+    if(req.query.search) {
+      sql = "select * from keywords where name like $1";
+      args = [req.query.search + '%'];
+    } 
+
+    query(sql, args, function(err, rows) {
       if (err) return res.send(err);
       
       res.json(rows);
