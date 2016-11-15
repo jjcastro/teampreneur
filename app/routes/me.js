@@ -9,7 +9,7 @@ var router = express.Router();
 router.route('/')
   .get(function(req, res) {
 
-    var sql = 'SELECT id, name, email FROM users WHERE email = $1';
+    var sql = 'SELECT id, name, occupation, email FROM users WHERE email = $1';
     
     query.first(sql, req.decoded.email, function(err, rows) {
       if (err) res.send(err);
