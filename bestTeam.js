@@ -1,3 +1,4 @@
+"use strict";
 // clase que representa a un usuario con sus personalidades
 class Usuario{
 	/*
