@@ -9,7 +9,7 @@ var router = express.Router();
 router.route('/')
   .get(function(req, res) {
 
-    var sql = 'SELECT id, name, occupation, email FROM users WHERE email = $1';
+    var sql = 'SELECT id, name, occupation, email, image_link, phone FROM users WHERE email = $1';
     
     query.first(sql, req.decoded.email, function(err, rows) {
       if (err) res.send(err);
@@ -21,11 +21,22 @@ router.route('/')
   .put(function(req, res) {
     
     var params = req.body;
-    var sql = "update users set name=$1,email=$2,image_link=$3,phone=$4 where id=$5 RETURNING *"
-    query(sql, [params.name,params.email,params.image_link,params.phone,req.params.user_id], function(err, rows) {
+    // console.log(params);
+    var sql = "update users set name=$1,image_link=$2,phone=$3,occupation=$4 where id=$5 RETURNING *";
+    query(sql,
+      [
+        params.name,
+        params.image_link,
+        params.phone,
+        params.occupation,
+        req.decoded.id
+      ],
+      function(err, rows) {
       if (err) return res.send(err);
-      console.log(rows);
-      res.json(rows);
+      res.json({
+        success: true,
+        message: 'User updated!'
+      });
     });
 
   });
