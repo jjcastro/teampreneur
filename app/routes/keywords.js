@@ -67,7 +67,7 @@ router.route('/user')
         message: 'Added keyword to user'
       });
     });
-  }
+  })
 
   // delete the user with this id
   .delete(function(req, res) {
