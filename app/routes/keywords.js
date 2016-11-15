@@ -56,9 +56,31 @@ router.route('/user')
 
   })
 
+  .post(function(req, res) {
+    var sql = "insert into user_keywords (user_id, keyword_id) values ($1, $2)";
+
+    query(sql, [req.decoded.id, req.body.id], function(err, rows) {
+      if (err) return res.send(err);
+      
+      res.json({
+        success: true,
+        message: 'Added keyword to user'
+      });
+    });
+  }
+
   // delete the user with this id
   .delete(function(req, res) {
-    
+    var sql = "delete from user_keywords where user_id=$1 and keyword_id=$2";
+
+    query(sql, [req.decoded.id, req.body.id], function(err, rows) {
+      if (err) return res.send(err);
+      
+      res.json({
+        success: true,
+        message: 'Removed keyword from user'
+      });
+    });
 
 
   });
