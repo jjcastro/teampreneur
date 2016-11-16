@@ -36,13 +36,6 @@ router.route('/')
   });
 
 router.route('/user')
-  // create a user (accessed at POST http://localhost:8080/users)
-  .post(function(req, res) {
-    
-
-
-  })
-
   // get all the users (accessed at GET http://localhost:8080/api/users)
   .get(function(req, res) {
 
@@ -64,7 +57,8 @@ router.route('/user')
       
       res.json({
         success: true,
-        message: 'Added keyword to user'
+        message: 'Added keyword to user',
+        rowsAdded: rows
       });
     });
   })
@@ -78,7 +72,8 @@ router.route('/user')
       
       res.json({
         success: true,
-        message: 'Removed keyword from user'
+        message: 'Removed keyword from user',
+        rowsRemoved: rows
       });
     });
 
